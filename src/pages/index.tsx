@@ -1,11 +1,9 @@
 import Head from "next/head";
-import { api } from "~/utils/api";
-import { SignInButton } from "@clerk/nextjs";
-import { SignOutButton } from "@clerk/nextjs";
+import { SignInButton, SignOutButton, UserButton, currentUser} from "@clerk/nextjs";
+
 
 
 export default function Home() {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
   return (
     <>
@@ -18,6 +16,7 @@ export default function Home() {
         
           <div className="flex gap-3 text-slate-400">
             <SignInButton />
+            <UserButton />
             <SignOutButton />
           </div>
          
