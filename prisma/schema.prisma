@@ -3,16 +3,23 @@
 
 generator client {
     provider = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Example {
     id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Post {
+    id        String   @id @default(cuid())
+    authorId  String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
