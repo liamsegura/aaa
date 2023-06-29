@@ -37,20 +37,19 @@ const GioLocationComponent = () => {
       if (!location) {
         return;
       }
-
+  
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=restaurants&lat=${location.latitude}&lon=${location.longitude}`
+        `https://api.opentripmap.com/0.1/en/places/radius?radius=5000&lon=${location.longitude}&lat=${location.latitude}&kinds=sightseeing&format=json&limit=10`
       );
-
+  
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
-        const placesData = data.map((result: any) => ({
-          name: result.display_name,
-          address: result.address,
+        const placesData = data.map((item: any) => ({
+          name: item.name,
+          address: item.address,
           location: {
-            latitude: parseFloat(result.lat),
-            longitude: parseFloat(result.lon),
+            latitude: item.point.lat,
+            longitude: item.point.lon,
           },
         }));
         setPlaces(placesData);
@@ -61,6 +60,7 @@ const GioLocationComponent = () => {
       console.error('Error searching places:', error);
     }
   };
+  
 
   return (
           <div>
