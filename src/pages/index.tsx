@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { SignInButton, SignOutButton, UserButton, useUser } from "@clerk/nextjs";
 import { api } from "~/utils/api";
-import GioLocationComponent from "./compenents/GioLocationCompenent";
 import Link from 'next/link';
 
 
@@ -26,9 +25,6 @@ const Home = () => {
         </div>
       </nav>
       <main className="flex min-h-screen flex-col items-center justify-center">
-       
-        <GioLocationComponent />
-
         <div className="flex gap-3">
           <ul>
             {data?.map((post) => (
