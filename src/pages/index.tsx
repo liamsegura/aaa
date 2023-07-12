@@ -11,9 +11,28 @@ import {
 } from "../compenents/ui/card";
 import { Suspense } from "react";
 import Loading from "../loading";
+import { useState, useEffect } from "react";
 
 const Home = () => {
   const user = useUser();
+
+  const [drinks, setDrinks] = useState([]);
+
+  const getDrinks = async () => {
+    await fetch(
+      "https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail"
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setDrinks(data.drinks);
+      });
+  };
+
+  useEffect(() => {
+    getDrinks();
+  }, []);
+
+  console.log(drinks);
   return (
     <>
       <Head>
@@ -22,28 +41,37 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <main className="flex min-h-screen flex-col items-center">
-        <div className="flex gap-3 p-10">
-          {user.isSignedIn ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Card Title</CardTitle>
-                <CardDescription>Card Description</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Suspense fallback={<Loading />}>
-                  <img
-                    className="rounded-lg"
-                    src="https://source.unsplash.com/random/400x200"
-                    alt=""
-                  />
-                </Suspense>
-              </CardContent>
-              <CardFooter>
-                <p>Card Footer</p>
-              </CardFooter>
-            </Card>
-          ) : null}
+      <main className="flex min-h-screen items-center justify-center">
+        <div className="max-w-sm p-10">
+          <ul>
+            {user.isSignedIn ? (
+              drinks.length > 0 ? (
+                drinks.map((drink: any) => (
+                  <li key={"test"}>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>{drink.strDrink}</CardTitle>
+                        <CardDescription>
+                          {drink.strInstructions}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Suspense fallback={<Loading />}>
+                          <img
+                            className="rounded-lg"
+                            src={drink.strDrinkThumb}
+                            alt=""
+                          />
+                        </Suspense>
+                      </CardContent>
+                    </Card>
+                  </li>
+                ))
+              ) : (
+                <li>No drinks available</li>
+              )
+            ) : null}
+          </ul>
         </div>
       </main>
     </>
