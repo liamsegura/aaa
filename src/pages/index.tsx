@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useUser, useOrganization } from "@clerk/nextjs";
-import Header from "./compenents/Header";
+import Header from "../compenents/Header";
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./compenents/ui/card";
+} from "../compenents/ui/card";
 
 const Home = () => {
   const user = useUser();
