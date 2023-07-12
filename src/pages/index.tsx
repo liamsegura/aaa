@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { useUser, useOrganization } from "@clerk/nextjs";
-import Link from "next/link";
 import Header from "./compenents/Header";
 import {
   Card,
