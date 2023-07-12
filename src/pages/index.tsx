@@ -5,34 +5,55 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "../compenents/ui/card";
 import { Suspense } from "react";
-import Loading from "../loading";
 import { useState, useEffect } from "react";
+
+interface Drink {
+  idDrink: string;
+  strDrink: string;
+  strDrinkThumb: string;
+}
+
+interface DrinkData {
+  drinks: Drink[] | null;
+}
 
 const Home = () => {
   const user = useUser();
-
-  const [drinks, setDrinks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [drinks, setDrinks] = useState<Drink[]>([]);
 
   const getDrinks = async () => {
-    await fetch(
-      "https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail"
-    )
-      .then((res) => res.json())
-      .then((data) => {
+    try {
+      const res = await fetch(
+        "https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail"
+      );
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const data: DrinkData = await res.json();
+      console.log(data);
+      if (data && data.drinks) {
         setDrinks(data.drinks);
-      });
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching drinks:", error);
+    }
   };
 
   useEffect(() => {
-    getDrinks();
+    const fetchData = async () => {
+      try {
+        await getDrinks();
+      } catch (error) {
+        console.error("Error fetching drinks:", error);
+      }
+    };
+    void fetchData();
   }, []);
 
-  console.log(drinks);
   return (
     <>
       <Head>
@@ -45,30 +66,34 @@ const Home = () => {
         <div className="max-w-sm p-10">
           <ul>
             {user.isSignedIn ? (
-              drinks.length > 0 ? (
-                drinks.map((drink: any) => (
-                  <li key={"test"}>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>{drink.strDrink}</CardTitle>
-                        <CardDescription>
-                          {drink.strInstructions}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <Suspense fallback={<Loading />}>
-                          <img
-                            className="rounded-lg"
-                            src={drink.strDrinkThumb}
-                            alt=""
-                          />
-                        </Suspense>
-                      </CardContent>
-                    </Card>
-                  </li>
-                ))
+              loading ? (
+                <li>Loading...</li>
               ) : (
-                <li>No drinks available</li>
+                <>
+                  {drinks.length > 0 ? (
+                    drinks.map((drink: Drink) => (
+                      <li key={drink.idDrink}>
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>{drink.strDrink}</CardTitle>
+                            <CardDescription></CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <Suspense fallback={<div>Loading image...</div>}>
+                              <img
+                                className="rounded-lg"
+                                src={drink.strDrinkThumb}
+                                alt=""
+                              />
+                            </Suspense>
+                          </CardContent>
+                        </Card>
+                      </li>
+                    ))
+                  ) : (
+                    <li>No drinks available</li>
+                  )}
+                </>
               )
             ) : null}
           </ul>
