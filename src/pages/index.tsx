@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useUser, useOrganization } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import Header from "../compenents/Header";
 import {
   Card,
@@ -9,23 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "../compenents/ui/card";
+import { Suspense } from "react";
+import Loading from "../loading";
 
 const Home = () => {
   const user = useUser();
-
-  const { membershipList } = useOrganization({
-    membershipList: {},
-  });
-
-  if (typeof membershipList !== "object" || membershipList === null) {
-    return null;
-  }
-
-  const membershipArray = Object.values(membershipList);
-  const memberNames = membershipArray.map((m) => m.publicUserData.userId);
-
-  console.log(memberNames);
-
   return (
     <>
       <Head>
@@ -35,23 +23,27 @@ const Home = () => {
       </Head>
       <Header />
       <main className="flex min-h-screen flex-col items-center">
-        <div className="flex gap-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Card Title</CardTitle>
-              <CardDescription>Card Description</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <img
-                className="rounded-lg"
-                src="https://source.unsplash.com/random/400x200"
-                alt=""
-              />
-            </CardContent>
-            <CardFooter>
-              <p>Card Footer</p>
-            </CardFooter>
-          </Card>
+        <div className="flex gap-3 p-10">
+          {user.isSignedIn ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Card Title</CardTitle>
+                <CardDescription>Card Description</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Suspense fallback={<Loading />}>
+                  <img
+                    className="rounded-lg"
+                    src="https://source.unsplash.com/random/400x200"
+                    alt=""
+                  />
+                </Suspense>
+              </CardContent>
+              <CardFooter>
+                <p>Card Footer</p>
+              </CardFooter>
+            </Card>
+          ) : null}
         </div>
       </main>
     </>
